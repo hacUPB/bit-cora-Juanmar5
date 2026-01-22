@@ -1,0 +1,16 @@
+@5
+D=M
+@10
+D=D-A
+@MENOS
+D;JLT
+@7
+M=0
+@END
+0;JMP
+(MENOS)
+@7
+M=1
+(END)
+@END
+0;JMP
