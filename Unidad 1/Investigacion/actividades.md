@@ -77,3 +77,55 @@ D;JNE
 Esta condición permite ejecutar código solo cuando una tecla está presionada
 
 ### Actividad 4
+
+``` asm
+@5
+D=M
+@10
+D=D-A
+@MENOS
+D;JLT
+@7
+M=0
+@END
+0;JMP
+(MENOS)
+@7
+M=1
+(END)
+@END
+0;JMP
+```
+
+### Actividad 5
+
+``` asm
+@1
+D=A
+@i
+M=D
+@12
+M=0
+
+(LOOP)
+@i
+D=M
+@6
+D=D-A
+@END
+D;JGE
+
+@i
+D=M
+@12
+M=M+D
+
+@i
+M=M+1
+@LOOP
+0;JMP
+
+(END)
+@END
+0;JMP
+```
