@@ -1,25 +1,22 @@
-@1
+@5
 D=A
 @i
 M=D
+
 @12
 M=0
 
 (LOOP)
 @i
 D=M
-@6
-D=D-A
 @END
-D;JGE
+D;JEQ
 
-@i
-D=M
 @12
-M=M+D
+M=M+1
 
 @i
-M=M+1
+M=M-1
 @LOOP
 0;JMP
 

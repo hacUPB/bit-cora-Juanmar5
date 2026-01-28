@@ -29,7 +29,7 @@ M=D
 
 # Actividad 3
 ### Predicciones
-
+- Hará que tocar una tecla empiece a colorear la pantalla
 ### Definiciones
 #### Instrucción de la ALU y qué hace
 - D=D-A
@@ -70,11 +70,14 @@ D=M
 D;JNE
 ``` 
 
+
 - Se lee el valor del teclado.
 - Si D ≠ 0, significa que hay una tecla presionada.
 - El programa salta a la etiqueta KEYPRESSED.
 
 Esta condición permite ejecutar código solo cuando una tecla está presionada
+
+![alt text](<Ej3 Image.png>)
 
 ### Actividad 4
 - Predicción: Un jump como en el del keyboard debería servir para ejecutar la comparación si resto los números
@@ -101,41 +104,39 @@ M=1
 ```
 - Observo: Sí funcionó pero tuve que hacer varios ajustes como agregar la resta del 10 para que se compara el valor con cero de manera justa además de las líneas iniciales para introducir un número a comparar, no sé si guardar el valor en la memoria antes de la comparación era realmente necesario pero sirve como constancia de qué valor introduje al inicio así que lo dejé ahí
 - Reflexiono: El JLT y demás jumps comparativos siempre comparan con cero y por ende cualquier comparativo debe restar el valor a comparar al número siendo comparado, además de que declarar etiquetas sirve como forma de copiar y pegar un if o condicional como si fuera una función siendo llamada
-
+![alt text](<Ej4 Image.png>)
 ### Actividad 5
 - Predicción: Creo que puedo crear un loop que haga una suma a un contador que determine cuántas veces se ha creado un loop y lo compare hasta que sea igual a cero con un valor de 5 y mientras sume por 1, guarde en la memoria 12 y se repita las veces que tome el contador para que sume el valor exactamente 5 veces
 
 ``` asm
-@1
+@5
 D=A
 @i
 M=D
+
 @12
 M=0
 
 (LOOP)
 @i
 D=M
-@6
-D=D-A
 @END
-D;JGE
+D;JEQ
 
-@i
-D=M
 @12
-M=M+D
+M=M+1
 
 @i
-M=M+1
+M=M-1
 @LOOP
 0;JMP
 
 (END)
 @END
 0;JMP
-```
 
+```
+![alt text](<Ej5 Image.png>)
 ### Actividad 6
 
 Sin consultar tus apuntes, el simulador o cualquier otro material, responde con tus propias palabras a las siguientes preguntas. ¡No te preocupes por la perfección! El objetivo es ver qué recuerdas ahora mismo.
@@ -151,11 +152,19 @@ Parte 1: recuperación de conocimiento (retrieval practice)
 - Como @10 vs D=A y M=D
 3. Explica la función de los siguientes componentes del computador Hack: el registro D, el registro A y la ALU.
 - Registro A llega a una dirección de memoria como abrir un locker, Registro D almacena el valor de la A para futuro uso o asignación
-- La ALU
+- La ALU es el bloque que hace todas las operaciones del CPU usando solo compuertas NAND
 4. ¿Cómo se implementa un salto condicional en Hack? Describe un ejemplo (p. ej., saltar si el valor de D es mayor que cero).
 - Con JLT, JLE, JGT, JGE. Por ejemplo decir que D;JGE es pedir que el valor de D sea mayor o igual a cero
+- D;JGT      // si D > 0 → salta a A
 5. ¿Cómo se implementa un loop en el computador Hack? Describe un ejemplo (p. ej., un loop que decremente un valor hasta que llegue a cero).
-- 
+- Se construye usando etiquetas (labels) + salto condicional.
+-  ``` asm
+    (LOOP)
+    D=D-1        // decrementa D
+    @LOOP
+    D;JGT        // si D > 0, vuelve a LOOP
+    ```
+
 6. ¿Cuál es la diferencia entre la instrucción D=M y la instrucción M=D?
 - M=D le da a M el valor de D, D=M le da a D el valor de M
 7. Describe brevemente qué se necesita para leer un valor del teclado (KBD) y para “pintar” un pixel en la pantalla (SCREEN).
