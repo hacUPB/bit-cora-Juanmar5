@@ -77,10 +77,13 @@ D;JNE
 Esta condición permite ejecutar código solo cuando una tecla está presionada
 
 ### Actividad 4
+- Predicción: Un jump como en el del keyboard debería servir para ejecutar la comparación si resto los números
 
 ``` asm
+@25
+D=A
 @5
-D=M
+M=D
 @10
 D=D-A
 @MENOS
@@ -96,8 +99,11 @@ M=1
 @END
 0;JMP
 ```
+- Observo: Sí funcionó pero tuve que hacer varios ajustes como agregar la resta del 10 para que se compara el valor con cero de manera justa además de las líneas iniciales para introducir un número a comparar, no sé si guardar el valor en la memoria antes de la comparación era realmente necesario pero sirve como constancia de qué valor introduje al inicio así que lo dejé ahí
+- Reflexiono: El JLT y demás jumps comparativos siempre comparan con cero y por ende cualquier comparativo debe restar el valor a comparar al número siendo comparado, además de que declarar etiquetas sirve como forma de copiar y pegar un if o condicional como si fuera una función siendo llamada
 
 ### Actividad 5
+- Predicción: Creo que puedo crear un loop que haga una suma a un contador que determine cuántas veces se ha creado un loop y lo compare hasta que sea igual a cero con un valor de 5 y mientras sume por 1, guarde en la memoria 12 y se repita las veces que tome el contador para que sume el valor exactamente 5 veces
 
 ``` asm
 @1
@@ -129,3 +135,39 @@ M=M+1
 @END
 0;JMP
 ```
+
+### Actividad 6
+
+Sin consultar tus apuntes, el simulador o cualquier otro material, responde con tus propias palabras a las siguientes preguntas. ¡No te preocupes por la perfección! El objetivo es ver qué recuerdas ahora mismo.
+Parte 1: recuperación de conocimiento (retrieval practice)
+1. Describe con tus palabras las tres fases del ciclo Fetch-Decode-Execute. ¿Qué rol juega el Program Counter (PC) en este ciclo?
+- Fetch: Agarrar el código y leerlo
+- Decode: Interpretar lo que hará cada función individual
+- Execute: Ejecutar y comprobar que la hipótesis sea correcta
+- PC: Cuenta el número del próximo paso a ejecutar por la CPU
+2. ¿Cuál es la diferencia fundamental entre una instrucción-A (que empieza con @) y una instrucción-C (que involucra D, M, A, etc.) en el lenguaje ensamblador de Hack? Da un ejemplo de cada una.
+- La instrucción A da un valor únicamente a A
+- La instrucción C puede igualar y asignar valores a otras direcciones como lo son la ROM y la RAM por medio del valor de A
+- Como @10 vs D=A y M=D
+3. Explica la función de los siguientes componentes del computador Hack: el registro D, el registro A y la ALU.
+- Registro A llega a una dirección de memoria como abrir un locker, Registro D almacena el valor de la A para futuro uso o asignación
+- La ALU
+4. ¿Cómo se implementa un salto condicional en Hack? Describe un ejemplo (p. ej., saltar si el valor de D es mayor que cero).
+- Con JLT, JLE, JGT, JGE. Por ejemplo decir que D;JGE es pedir que el valor de D sea mayor o igual a cero
+5. ¿Cómo se implementa un loop en el computador Hack? Describe un ejemplo (p. ej., un loop que decremente un valor hasta que llegue a cero).
+- 
+6. ¿Cuál es la diferencia entre la instrucción D=M y la instrucción M=D?
+- M=D le da a M el valor de D, D=M le da a D el valor de M
+7. Describe brevemente qué se necesita para leer un valor del teclado (KBD) y para “pintar” un pixel en la pantalla (SCREEN).
+- @READKEYBOARD o @KBD que empieza a tomar valores de las teclas a partir del 24576
+- Del valor 16384  a  24575 de la RAM empezar a pintar pixeles editando los bytes de ceros a unos que pintan pixeles negros
+
+Parte 2: reflexión sobre tu proceso (metacognición)
+1. ¿Cuál fue el concepto o actividad más desafiante de esta unidad para ti y por qué?
+- La 3 porque fue un salto muy fuerte respecto a los loops en la CPU, el código del keyboard era bastante amplio y complejo comparado a los ejercicios simples de antes.
+2. La metodología de “predecir, ejecutar, observar y reflexionar” fue central en nuestras actividades. ¿En qué momento esta metodología te resultó más útil para entender algo que no tenías claro?
+- En Predecir y Reflexionar porque pude regresar en mis notas para corregir y justificar mi fallo, lo que me permitía aprender mejor.
+3. Describe un momento “¡Aha!” que hayas tenido durante estas dos semanas. ¿Qué estabas haciendo cuando ocurrió?
+- Supongo que si no fue entender cómo funciona el valor de memoria de Screen fue entender que los saltos comparaban a cero.
+4. Pensando en la próxima unidad, ¿Qué harás diferente en tu proceso de estudio para aprender de manera más efectiva?
+- Seguiré adelantando las unidades para poder tener una base y repasarlas en clase para verificar qué hice mal y qué no, de esa forma entendiendo bien todo

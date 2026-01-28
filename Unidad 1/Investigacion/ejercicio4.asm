@@ -1,5 +1,7 @@
+@25
+D=A
 @5
-D=M
+M=D
 @10
 D=D-A
 @MENOS
