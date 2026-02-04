@@ -9,9 +9,21 @@
 M=1
 ```
 
-- Hipótesis de código C++
+- Código C++ [Hubo uso de IA para la traducción]
 ``` c++
-ñ
+#include <iostream>
+
+int main() {
+    // Simulación de la RAM Hack (32K palabras)
+    int RAM[32768] = {0};
+
+    // Dirección de la pantalla
+    RAM[16384] = 1;
+
+    // Verificación
+    std::cout << "Valor en SCREEN[0]: " << RAM[16384] << std::endl;
+    return 0;
+}
 ```
 
 
@@ -35,7 +47,16 @@ M=-1
 
 - Hipótesis de código C++
 ``` c++
-ñ
+#include <iostream>
+
+int main() {
+    int RAM[32768] = {0};
+    RAM[16384] = -1;
+
+    std::cout << "Valor en SCREEN[0]: " << RAM[16384] << std::endl;
+    return 0;
+}
+
 ```
 
 # **Actividad 3: Entrada salida interactiva**
@@ -58,3 +79,4 @@ if KBD = 0
     go to keyboard
 }
 ```
+
