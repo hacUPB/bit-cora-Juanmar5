@@ -6,7 +6,7 @@
     - Permite ver cuáles son las variables en uso en la la línea actual y anterior
     - Te muestra valores importantes sin que tengas que agregarlos a mano.
 
-
+### **Actividad 2**
 
 Predicciones: 
 
@@ -71,3 +71,61 @@ int main() {
     return 0;
 }
 ```
+### **Actividad 3**
+
+Dónde pertenece cada variable en la memorias
+
+Variables globales:
+    - int global_inicializada = 42;
+    - int global_no_inicializada;
+    Existen durante toda la ejecución del programa.
+
+Constante de solo lectura:
+const char* const mensaje_ro = "Hola, memoria de solo lectura";
+
+
+📍 Ubicación:
+➡️ El texto está en la zona de solo lectura (RO Data)
+➡️ El puntero mensaje_ro está en el segmento de variables globales
+
+🔹 Variable estática
+static int var_estatica = 100;
+
+
+📍 Ubicación:
+➡️ Segmento de variables globales y estáticas
+
+📌 Aunque esté dentro de una función, NO va al stack.
+
+🔹 Variables locales en main()
+int a = 10;
+int b = 20;
+int c = suma(a, b);
+int tamArray = 10;
+int* arrayHeap;
+
+
+📍 Ubicación:
+➡️ Stack
+
+📌 Se crean al entrar a main() y se destruyen al salir.
+
+🔹 Variables locales en suma()
+int a, b, c;
+
+
+📍 Ubicación:
+➡️ Stack (en el frame de la función suma)
+
+📌 Desaparecen al retornar la función.
+
+🔹 Memoria dinámica
+int* arr = new int[tam];
+
+
+📍 Ubicación:
+➡️ Heap
+
+📌 Permanece hasta que se ejecuta:
+
+delete[] arrayHeap;
