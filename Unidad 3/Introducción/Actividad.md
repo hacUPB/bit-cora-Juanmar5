@@ -6,7 +6,7 @@
     - Permite ver cuáles son las variables en uso en la la línea actual y anterior
     - Te muestra valores importantes sin que tengas que agregarlos a mano.
 
-### **Actividad 2**
+# **Actividad 2**
 
 Predicciones: 
 
@@ -71,61 +71,169 @@ int main() {
     return 0;
 }
 ```
-### **Actividad 3**
+# **Actividad 3**
 
-Dónde pertenece cada variable en la memorias
+## Dónde pertenece cada variable en la memorias
 
-Variables globales:
-    - int global_inicializada = 42;
-    - int global_no_inicializada;
-    Existen durante toda la ejecución del programa.
+### Segmento de código:
+- main()
+- suma()
+- crearArrayHeap()
+- funcionConStatic()
 
-Constante de solo lectura:
-const char* const mensaje_ro = "Hola, memoria de solo lectura";
+### Variables globales y estáticas:
+- global_inicializada
+- global_no_inicializada
+- var_estatica
+- mensaje_ro (puntero)
 
+### Zona de solo lectura:
+- "Hola, memoria de solo lectura"
 
-📍 Ubicación:
-➡️ El texto está en la zona de solo lectura (RO Data)
-➡️ El puntero mensaje_ro está en el segmento de variables globales
+### Heap:
+- array creado con new int[tam]
 
-🔹 Variable estática
-static int var_estatica = 100;
-
-
-📍 Ubicación:
-➡️ Segmento de variables globales y estáticas
-
-📌 Aunque esté dentro de una función, NO va al stack.
-
-🔹 Variables locales en main()
-int a = 10;
-int b = 20;
-int c = suma(a, b);
-int tamArray = 10;
-int* arrayHeap;
+### Stack:
+- a, b, c (main)
+- tamArray
+- arrayHeap (puntero)
+- a, b, c (suma)
 
 
-📍 Ubicación:
-➡️ Stack
+# **Actividad 4: Experimentos**
+### Experimento 1: Modificar el segmento de texto
 
-📌 Se crean al entrar a main() y se destruyen al salir.
+¿Qué ocurre?
+- El programa falla o se cierra.
 
-🔹 Variables locales en suma()
-int a, b, c;
+¿Por qué?
+- Porque el segmento de código es de solo lectura. No se puede modificar el código del programa mientras se ejecuta.
+
+### Experimento 2: Modificar una constante global
+
+¿Qué ocurre?
+- El programa produce un error o comportamiento indefinido.
+
+¿Por qué?
+- La cadena está en una zona de solo lectura, y el sistema no permite modificarla aunque se fuerce el puntero.
+
+### Experimento 3: Modificar variables globales
+
+¿Qué ocurre?
+- El programa funciona bien y los valores cambian.
+
+¿Por qué?
+- Las variables globales están en el segmento de datos, que sí permite modificaciones en tiempo de ejecución.
+
+### Experimento 4: Modificar una variable local estática fuera de la función
+
+¿Qué ocurre?
+- El código no compila.
+
+¿Por qué?
+- La variable es local a la función, por lo que no se puede usar fuera de ella, aunque sea estática.
+
+¿Qué pasa al entrar y salir de la función?
+- Las variables locales normales se crean y destruyen.
+- Las variables locales estáticas conservan su valor.
+
+### Experimento 5: Variable local estática vs no estática
+
+¿Qué ocurre?
+- La variable no estática siempre vale 100.
+- La variable estática aumenta su valor en cada llamada.
+
+¿Por qué?
+- La variable estática se guarda entre llamadas; la normal no.
+
+### Experimento 6: Modificar el Heap
+
+¿Qué ocurre?
+- Después de delete[], acceder al arreglo genera comportamiento indefinido.
+
+¿Por qué?
+- La memoria ya fue liberada y no debe usarse.
+
+### Diferencia Heap vs Stack:
+
+- Stack: automático y seguro.
+- Heap: manual y más propenso a errores.
+
+### ¿Qué pasa si no libero la memoria?
+- Se generan fugas de memoria.
+
+### ¿Por qué usar delete[]?
+- Porque el arreglo fue creado con new[].
 
 
-📍 Ubicación:
-➡️ Stack (en el frame de la función suma)
 
-📌 Desaparecen al retornar la función.
+# **Actividad 5 – Análisis del mapa de memoria**
 
-🔹 Memoria dinámica
-int* arr = new int[tam];
+Actividad 5 – Copia de objetos y su ubicación en memoria
+A. Predicción (sin ejecutar el código)
+
+1. 
+- ¿Cuál será la salida final en la consola?
+Creo que el programa va a mostrar los valores de las variables y cómo cambian cuando se llaman las funciones. Pienso que el contador global y el estático van a aumentar, y que las variables pasadas por valor no van a cambiar fuera de la función.
+
+2. Salida completa esperada:
+
+- Se imprimen los valores iniciales de las variables.
+
+- El contador global aumenta cada vez que se llama la función.
+
+- El contador estático también aumenta, pero mantiene su valor entre llamadas.
+
+- Los valores pasados por valor no cambian en main.
+
+- (Puede que el contador estático se reinicie, no estoy del todo seguro).
+
+3. Mapa de memoria conceptual (antes de que termine main):
+
+- Datos globales / estáticos:
+```
+contador_global
+
+contador_estatico
+```
+- Stack:
+
+```
+val_A, val_B, val_C (en main)
+
+Parámetro a de sumaPorValor
+```
+
+- Código:
+```
+Función main
+
+Función sumaPorValor
+```
+
+- No creo que se use el Heap en este programa.
 
 
-📍 Ubicación:
-➡️ Heap
+B. Verificación y análisis (con depurador)
 
-📌 Permanece hasta que se ejecuta:
+1. Comparación entre la salida real y la predicción:
+- La salida fue parecida a lo que esperaba, pero confirmé que el contador estático no se reinicia, sino que sigue aumentando entre llamadas. Mi error fue pensar que podía comportarse como una variable local normal.
 
-delete[] arrayHeap;
+- Las capturas más importantes fueron:
+
+    - Antes de la primera llamada a la función.
+
+    - Después de cada llamada, cuando el contador cambia.
+
+2. ¿Qué demuestran las capturas?
+- Demuestran que:
+
+    - Pasar parámetros por valor crea copias en el stack.
+
+    - Los cambios dentro de la función no afectan a las variables originales.
+
+    - Las variables globales y estáticas sí conservan cambios.
+
+3. Comportamiento de contador_estatico:
+- contador_estatico recuerda su valor porque se guarda en el segmento de datos estáticos y no se destruye al salir de la función.
+- A diferencia de una variable local normal, no se vuelve a crear cada vez, sino que se inicializa una sola vez y conserva su valor entre llamadas.
