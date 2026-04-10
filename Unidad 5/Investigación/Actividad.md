@@ -62,34 +62,138 @@ Esta es la parte más importante. Imagina que eres un diseñador de lenguajes de
 
 # **Actividad 2:**
 
-- Cuando uno hace click, se crea una partícula que sale desde la parte de abajo de la pantalla y sube. Conforme sube, se le va acabando el tiempo de vida y explota.
+- Cuando uno hace click, se crea una partícula que sale desde la parte de abajo de la pantalla y sube. Conforme sube, se prepara para explotar
 
-- Cuando explota, el programa crea muchas partículas nuevas que salen en distintas direcciones. Por ejemplo una hace círculos, otra sale en direcciones aleatorias y otra hace forma de estrella.
+- Cuando explota, el programa crea muchas partículas nuevas que salen en distintas direcciones. Por ejemplo una hace círculos, otra sale en direcciones aleatorias y otra hace forma de estrella
 
-- Todo esto funciona porque todas las clases heredan de una clase base llamada Particle. Esa clase define métodos como update() y draw(), pero no los implementa, sino que cada subclase los define a su manera.
+- Funciona porque las subclases heredan de una clase base Particle que define métodos como update() y draw(), pero cada subclase lo va sobreescribiendo
 
-- En el update() del programa, se recorren todas las partículas y se actualizan. Si una partícula debe explotar, entonces se eliminan y se crean nuevas partículas de explosión en su posición. También se eliminan las partículas cuando ya no sirven, usando delete, para evitar problemas de memoria.
+- En el update() del programa, se recorren todas las partículas y se actualizan, se van declarando como vector2 al estar en xy. Si una partícula debe explotar, entonces se elimina y se crean nuevas partículas de explosión en su posición. También se eliminan las partículas cuando ya no sirven, usando delete, para evitar problemas de memoria, ya que están en el heap por usar el new
 
-- En el draw(), simplemente se recorren todas las partículas y se dibujan. No importa si son de tipo círculo, estrella o random, porque cada una ya tiene su propio método draw().
+- En el draw(), simplemente se recorren todas las partículas y se dibujan. No importa si son de tipo círculo, estrella o random, porque cada una ya tiene su propio método draw()
 
+![alt text](<A2 Ejemplo.png>)
 
 # **Actividad 3:**
 
-Antes de ejecutar el programa, esperaba ver en memoria un objeto de tipo ofApp con sus métodos y el vector particles. Pensaba que el depurador iba a mostrar los valores de las variables y tal vez direcciones de memoria.
+1. Hipótesis antes de ejecutar
+- Antes de correrlo esperaba ver que el objeto ofApp guardara principalmente el vector particles, porque ese es el atributo más importante de la clase. También esperaba que en memoria se viera una referencia a ofBaseApp por la herencia.
 
-Al ejecutar y ver el objeto en el depurador, se puede observar que aparece el vector particles, que guarda punteros a objetos Particle. También se ven direcciones de memoria, lo que indica que los objetos realmente están guardados en memoria mientras el programa corre. El depurador permite ver el contenido de las variables y cómo cambian en tiempo real. Con esto se concluye que un objeto sí es un espacio en memoria que contiene sus atributos.
+2. Observación en memoria
+- Al ejecutar con el depurador sí se puede ver que el objeto tiene dentro el vector particles, y dentro de ese vector aparecen punteros a objetos de tipo Particle.
 
-Luego, al inspeccionar un objeto de tipo CircularExplosion, se puede ver que en memoria no solo está esa clase, sino también todo lo que hereda: primero Particle, luego ExplosionParticle y finalmente CircularExplosion. El depurador muestra atributos como posición, velocidad, color, edad y tamaño. Esto demuestra que un objeto contiene toda la información de su jerarquía de herencia.
+- En mi caso capturé uno de los elementos del vector y el depurador mostró:
 
-También se observa que el objeto está compuesto de varias partes organizadas en memoria, y que cada atributo ocupa un espacio específico. Esto ayuda a entender mejor cómo funcionan los objetos internamente.
+```
+__vfptr
+update
+draw
+isDead
+shouldExplode
+getPosition
+getColor
+```
 
-Al revisar la _vtable, se observa que es una tabla de funciones virtuales. Contiene direcciones a funciones como update(), draw() y isDead(). En el caso de CircularExplosion y StarExplosion, las tablas son parecidas pero no iguales, porque cada clase implementa sus propios métodos.
+- Esto significa que el objeto en memoria no solo guarda sus datos, sino también una referencia interna a la tabla de funciones virtuales.
 
-Comparando ambas tablas, se nota que algunas funciones apuntan a implementaciones diferentes dependiendo de la clase. Esto indica que la _vtable permite que el programa sepa qué función ejecutar según el tipo real del objeto.
+3. Conclusión
 
-Se concluye que la tabla de funciones virtuales sirve para implementar el polimorfismo. Gracias a esto, cuando se llama un método como draw() desde un puntero a Particle, el programa ejecuta la versión correcta dependiendo de si es CircularExplosion, RandomExplosion o StarExplosion.
+- Concluyo que un objeto en C++ sí se organiza como una estructura real en memoria.
+- El depurador deja ver que además de los datos normales también existe un puntero oculto (__vfptr) que conecta con los métodos virtuales.
 
-Esto es similar al ejemplo de interfaces en C#, donde se llama el mismo método pero cada objeto responde diferente. La _vtable es lo que permite que el programa sepa qué función usar en cada caso, sin importar que todos se manejen como el mismo tipo base.
+- Esto me ayudó a entender que una clase no es solo “código”, sino que la instancia realmente ocupa memoria con datos y referencias a funciones.
+
+- Captura de un objeto tipo CircularExplosion
+
+- Aunque en mi prueba inicialmente capturé una RisingParticle, el comportamiento observado ayuda a entender cómo se vería CircularExplosion.
+
+4. Qué esperaría ver
+
+- Por la jerarquía:
+
+```
+Particle
+   ↓
+ExplosionParticle
+   ↓
+CircularExplosion
+```
+
+- esperaría ver en memoria:
+
+    - primero la parte heredada de Particle
+    - luego los atributos de ExplosionParticle
+    - finalmente la parte propia de CircularExplosion
+
+    - como:
+```
+position
+velocity
+color
+age
+lifetime
+size
+```
+
+5. Qué se puede concluir
+
+- Esto me hace pensar que la herencia en memoria se implementa como bloques consecutivos.
+
+- O sea, el objeto hijo primero guarda internamente la parte del padre, luego la del abuelo, y así hasta agregar sus propios datos.
+
+6. Tabla virtual (_vtable)
+
+
+![alt text](<Screenshot 2026-04-06 112421.png>)
+Aquí apareció
+
+__vfptr
+
+y debajo estaban listadas las funciones:
+
+```
+RisingParticle::update
+RisingParticle::draw
+RisingParticle::isDead
+RisingParticle::shouldExplode
+RisingParticle::getPosition
+RisingParticle::getColor
+``` 
+
+7. Qué observo
+
+- Lo que observo es que la tabla tiene las direcciones exactas de las funciones que pertenecen al tipo real del objeto.
+
+- O sea, aunque el vector sea de Particle*, el puntero virtual sabe que realmente es un RisingParticle.
+
+8. Relación con polimorfismo
+
+- Creo que esto es exactamente lo que hace posible el polimorfismo.
+
+Cuando el programa llama:
+```
+particles[i]->draw();
+```
+no mira solo el tipo Particle, sino que revisa el __vfptr, entra a la tabla virtual y llama la versión correcta de draw() según el objeto real.
+
+- Por eso funciona igual que el ejemplo de IAnimal:
+
+
+```
+si es perro → llama Perro.HacerSonido()
+si es gato → llama Gato.HacerSonido()
+```
+
+```
+si es CircularExplosion → llama su draw()
+si es StarExplosion → llama su draw()
+```
+
+9. Conclusión final
+
+- Concluyo que la _vtable sirve para que el programa decida en tiempo de ejecución qué método ejecutar según el tipo real del objeto.
+
+- Eso conecta directamente con métodos virtuales y polimorfismo, porque permite que una misma referencia (Particle*) actúe diferente dependiendo del objeto al que apunta.
 
 
 ### **Actividad 4**
