@@ -238,3 +238,110 @@ class C : public A, public B { public: int c; };
 Al analizar un objeto de este tipo en memoria, se puede observar que contiene primero los datos de una clase base, luego los de la otra, y finalmente los propios. Es decir, el objeto se construye combinando las partes de todas las clases base.
 
 Se concluye que la herencia múltiple hace que un objeto tenga múltiples bloques de memoria correspondientes a cada clase base, lo que puede hacerlo más complejo pero también más flexible.
+
+---
+
+### **Actividad 6**
+
+## Concepto de polimorfismo
+
+### Observación con el depurador
+
+Al usar el depurador en el ciclo:
+
+```cpp
+for (int i = 0; i < particles.size(); i++) {        
+    particles[i]->update(dt);    
+}
+```
+
+pude observar que aunque todos los elementos están guardados como `Particle*`, en realidad cada uno es de un tipo diferente:
+
+* algunos son `RisingParticle`
+* otros `CircularExplosion`
+* otros `RandomExplosion`
+* otros `StarExplosion`
+
+Cuando el programa ejecuta `update(dt)`, el depurador muestra que entra a diferentes funciones dependiendo del objeto.
+
+Por ejemplo:
+
+* si es `RisingParticle` ejecuta su propia lógica de movimiento y explosión
+* si es `ExplosionParticle` ejecuta la lógica de desvanecimiento
+* cada tipo tiene su propio comportamiento
+
+### Qué puedo observar
+
+Lo importante es que el mismo código:
+
+```cpp
+particles[i]->update(dt);
+```
+
+se comporta diferente dependiendo del objeto real.
+
+El depurador muestra que no siempre entra a la misma función, sino que cambia según el tipo.
+
+### Qué información me da el depurador
+
+El depurador deja ver que:
+
+- cada objeto tiene su propio `__vfptr`
+- ese puntero apunta a una tabla de funciones diferente
+- dependiendo de esa tabla, se llama una función distinta
+
+---
+
+## Dibujo del polimorfismo (explicación)
+
+Yo me lo imagino así:
+
+```
+particles (vector de Particle*)
+
+[0] ---> Particle* ---> __vfptr ---> tabla RisingParticle ---> update() de Rising
+[1] ---> Particle* ---> __vfptr ---> tabla CircularExplosion ---> update() de Explosion
+[2] ---> Particle* ---> __vfptr ---> tabla StarExplosion ---> update() de Star
+```
+
+Entonces cuando el programa hace:
+
+```
+particles[i]->update(dt)
+```
+
+lo que realmente pasa es:
+
+1. Va al objeto en memoria
+2. Lee el `__vfptr`
+3. Va a la tabla virtual (_vtable)
+4. Busca la función `update`
+5. Ejecuta la versión correcta
+
+
+## Conclusión
+
+Concluyo que el polimorfismo en tiempo de ejecución funciona gracias a la tabla de funciones virtuales.
+
+Aunque todas las partículas se manejan como `Particle*`, el programa sabe cuál función ejecutar porque cada objeto tiene su propia `_vtable`.
+
+Esto permite que un mismo código funcione para diferentes tipos sin necesidad de hacer condicionales.
+
+
+## Relación entre métodos virtuales y polimorfismo
+
+Los métodos virtuales son lo que permite que exista el polimorfismo.
+
+Si `update()` no fuera virtual, todos los objetos usarían la misma función de la clase base.
+
+Pero como es virtual:
+
+- cada clase puede sobrescribirlo (`override`)
+- la `_vtable` guarda esas versiones
+- en ejecución se elige la correcta
+
+Entonces:
+
+- métodos virtuales → permiten múltiples implementaciones
+- _vtable → guarda esas implementaciones
+- polimorfismo → usa eso para ejecutar la correcta
