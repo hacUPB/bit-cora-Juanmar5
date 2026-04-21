@@ -1,0 +1,12 @@
+# Ignorar proyecto pesado
+U5A2Ej/
+
+# Visual Studio
+.vs/
+bin/
+obj/
+
+# openFrameworks build files
+*.exe
+*.pdb
+*.ilk
